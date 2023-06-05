@@ -4,13 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class company extends Model
+class Company extends Model
 {
     protected $table = 'companies';
-    protected $fillable = ['company_name', 'street_address', 'representative_name',];
+    protected $fillable = ['company_name'];
 
-    public function Product()
+    public static function getAllCompanies()
     {
-        return $this->hasMany('App\Models\Product');
+        return self::all();
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
     }
 }

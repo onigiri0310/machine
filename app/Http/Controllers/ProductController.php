@@ -8,12 +8,49 @@ use App\Models\Company;
 
 class ProductController extends Controller
 {
+    public function list()
+    {
+        $products = Product::getAllProducts();
+        $companies = Company::getAllCompanies();
 
-    public function ProductRegister(){
-        $companies = Company::all();
-        return view('product_register', compact('companies'));
+        return view('list', compact('products', 'companies'));
     }
 
+    public function search(Request $request)
+    {
+        $productName = $request->input('product_name');
+        $companyId = $request->input('company_id');
+
+        $products = Product::searchProducts($productName, $companyId);
+        $companies = Company::getAllCompanies();
+
+        return view('list', compact('products', 'companies'));
+    }
+
+    public function show($id)
+    {
+        $product = Product::getProductById($id);
+
+        return view('detail', compact('product'));
+    }
+
+    public function destroy($id)
+    {
+        $result = Product::deleteProduct($id);
+
+        if ($result) {
+            return redirect()->route('list')->with('success', '商品が削除されました');
+        } else {
+            return redirect()->route('list')->with('error', '商品の削除に失敗しました');
+        }
+    }
+
+    public function ProductRegister()
+    {
+        $companies = Company::getAllCompanies();
+
+        return view('product_register', compact('companies'));
+    }
 
     public function store(Request $request)
     {
@@ -21,48 +58,38 @@ class ProductController extends Controller
         $data = $request->all();
 
         // 画像ファイルの保存
-        if (isset($data['image'])) {
-            $image = $data['image'];
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
             $imagePath = $image->store('images', 'public');
             $data['img_path'] = $imagePath;
         }
 
         // データベースに保存
-        $products = new Product();
-        $products->product_name = $data['product_name'];
-        $products->company_id = $data['company_id'];
-        $products->price = $data['price'];
-        $products->stock = $data['stock'];
-        $products->comment = $data['comment'];
-        $products->img_path = $data['img_path'];
-        $products->save();
+        $product = Product::createProduct($data);
 
-        // 保存後の処理（リダイレクトなど）を追加
-
-        return redirect('/product_register')->with('success', '登録しました');
+        if ($product) {
+            return redirect('/product_register')->with('success', '登録しました');
+        } else {
+            return redirect('/product_register')->with('error', '登録に失敗しました');
+        }
     }
 
     public function edit($id)
     {
-        $product = Product::find($id);
-        $companies = Company::all();
+        $product = Product::getProductById($id);
+        $companies = Company::getAllCompanies();
 
-        return view('edit', compact('product'),compact('companies'));
+        return view('edit', compact('product', 'companies'));
     }
 
     public function update(Request $request, $id)
     {
-        $product = Product::findOrFail($id);
-        $product->product_name = $request->input('product_name');
-        $product->company_id = $request->input('company_id');
-        $product->price = $request->input('price');
-        $product->stock = $request->input('stock');
-        $product->comment = $request->input('comment');
-        $product->img_path = $request->input('img_path');
+        $product = Product::updateProduct($id, $request->all());
 
-        $product->save();
-
-        return redirect()->route('detail',$product->id)->with('success', '更新しました');
+        if ($product) {
+            return redirect()->route('detail', $product->id)->with('success', '更新しました');
+        } else {
+            return redirect()->route('detail', $id)->with('error', '更新に失敗しました');
+        }
     }
-
 }

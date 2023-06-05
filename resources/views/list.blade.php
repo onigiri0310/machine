@@ -9,7 +9,7 @@
                     {{ __('商品一覧') }}
                 </div>
 
-                <form class="form-inline my-2 my-lg-0 ml-2" action="{{ route('list.search') }}" method="GET" >
+                <form class="form-inline my-2 my-lg-0 ml-2" action="{{ route('search') }}" method="GET" >
                     商品名<input class="ProductName" type="text" name="product_name"><br>
                     メーカー名<select class="MakerName" name="company_id">
                             <option value="">選択してください</option>
@@ -51,7 +51,7 @@
                                 </form>
                             </td>
                             <td>
-                                <form action="{{ route('list.destroy',$product->id) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');">
+                                <form action="{{ route('destroy',$product->id) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger">削除</button>
