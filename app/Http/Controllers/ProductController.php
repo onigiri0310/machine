@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Company;
+use Exception;
 
 class ProductController extends Controller
 {
@@ -36,12 +37,16 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
-        $result = Product::deleteProduct($id);
+        try{
+            $result = Product::deleteProduct($id);
 
-        if ($result) {
-            return redirect()->route('list')->with('success', '商品が削除されました');
-        } else {
-            return redirect()->route('list')->with('error', '商品の削除に失敗しました');
+            if ($result) {
+                return redirect()->route('list')->with('success', '商品が削除されました');
+            } else {
+                return redirect()->route('list')->with('error', '商品の削除に失敗しました');
+            }
+        }catch(Exception $e) {
+            return redirect()->route('list')->with('error', 'エラーが発生しました: ' . $e->getMessage());
         }
     }
 
@@ -54,23 +59,27 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        // リクエストデータを取得
-        $data = $request->all();
+        try{
+            // リクエストデータを取得
+            $data = $request->all();
 
-        // 画像ファイルの保存
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imagePath = $image->store('images', 'public');
-            $data['img_path'] = $imagePath;
-        }
+            // 画像ファイルの保存
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imagePath = $image->store('images', 'public');
+                $data['img_path'] = $imagePath;
+            }
 
-        // データベースに保存
-        $product = Product::createProduct($data);
+            // データベースに保存
+            $product = Product::createProduct($data);
 
-        if ($product) {
-            return redirect('/product_register')->with('success', '登録しました');
-        } else {
-            return redirect('/product_register')->with('error', '登録に失敗しました');
+            if ($product) {
+                return redirect('/product_register')->with('success', '登録しました');
+            } else {
+                return redirect('/product_register')->with('error', '登録に失敗しました');
+            }
+        }catch (Exception $e) {
+            return redirect('/product_register')->with('error', 'エラーが発生しました: ' . $e->getMessage());
         }
     }
 
@@ -84,12 +93,17 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        $product = Product::updateProduct($id, $request->all());
+        try{
+            $product = Product::updateProduct($id, $request->all());
 
-        if ($product) {
-            return redirect()->route('detail', $product->id)->with('success', '更新しました');
-        } else {
-            return redirect()->route('detail', $id)->with('error', '更新に失敗しました');
+            if ($product) {
+                return redirect()->route('detail', $product->id)->with('success', '更新しました');
+            } else {
+                return redirect()->route('detail', $id)->with('error', '更新に失敗しました');
+            }
+        }catch (Exception $e) {
+            // エラー処理
+            return redirect()->route('detail', $id)->with('error', 'エラーが発生しました: ' . $e->getMessage());
         }
     }
 }
