@@ -30,3 +30,6 @@ Route::get('/detail/{id}', [App\Http\Controllers\ProductController::class, 'show
 Route::delete('/products/{id}', [App\Http\Controllers\ProductController::class, 'destroy'])->name('destroy');
 Route::get('/edit/{id}', [App\Http\Controllers\ProductController::class,'edit'])->name('edit');
 Route::put('/update/{id}', [App\Http\Controllers\ProductController::class,'update'])->name('update');
+Route::get('/get-list-ajax', [App\Http\Controllers\ProductController::class,'getListAjax'])->name('getListAjax');
+
+

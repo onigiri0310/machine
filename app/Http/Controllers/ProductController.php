@@ -14,7 +14,10 @@ class ProductController extends Controller
         $products = Product::getAllProducts();
         $companies = Company::getAllCompanies();
 
-        return view('list', compact('products', 'companies'));
+        return response()->json([
+            'products' => $products,
+            'companies' => $companies,
+        ]);
     }
 
     public function search(Request $request)
@@ -22,10 +25,21 @@ class ProductController extends Controller
         $productName = $request->input('product_name');
         $companyId = $request->input('company_id');
 
-        $products = Product::searchProducts($productName, $companyId);
+        $products = Product::query()
+            ->when($productName, function ($query, $productName) {
+                return $query->where('product_name', 'LIKE', "%$productName%");
+            })
+            ->when($companyId, function ($query, $companyId) {
+                return $query->where('company_id', $companyId);
+            })
+            ->get();
+
         $companies = Company::getAllCompanies();
 
-        return view('list', compact('products', 'companies'));
+        return response()->json([
+            'products' => $products,
+            'companies' => $companies,
+        ]);
     }
 
     public function show($id)
@@ -106,4 +120,14 @@ class ProductController extends Controller
             return redirect()->route('detail', $id)->with('error', 'エラーが発生しました: ' . $e->getMessage());
         }
     }
+
+    public function getListAjax()
+    {
+        // 商品一覧を取得する処理（Eloquentクエリなど）
+        $products = Product::all();
+
+        // 取得した商品一覧データをJSON形式で返す
+        return response()->json($products);
+    }
+
 }
