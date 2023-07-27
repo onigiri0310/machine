@@ -31,5 +31,6 @@ Route::delete('/products/{id}', [App\Http\Controllers\ProductController::class, 
 Route::get('/edit/{id}', [App\Http\Controllers\ProductController::class,'edit'])->name('edit');
 Route::put('/update/{id}', [App\Http\Controllers\ProductController::class,'update'])->name('update');
 Route::get('/get-list-ajax', [App\Http\Controllers\ProductController::class,'getListAjax'])->name('getListAjax');
+Route::get('/list/sort/{column}',[App\Http\Controllers\ProductController::class,'sort'])->name('sort');
 
 

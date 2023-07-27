@@ -17,6 +17,10 @@
                                 <option value="{{ $company->id }}">{{ $company->company_name }}</option>
                             @endforeach
                     </select><br>
+                    <input type="number" name="min_price" placeholder="最低価格">
+                    <input type="number" name="max_price" placeholder="最高価格"><br>
+                    <input type="number" name="min_stock" placeholder="最低在庫数">
+                    <input type="number" name="max_stock" placeholder="最大在庫数"><br>
                     <input type="submit" name="submit" value="検索">
                 </form>
 
@@ -29,12 +33,12 @@
                 <div class="col-12" id="product-list">
                     <table class="col-10">
                         <tr>
-                            <th>ID</th>
-                            <th>商品画像</th>
-                            <th>商品名</th>
-                            <th>価格</th>
-                            <th>在庫数</th>
-                            <th>メーカー名</th>
+                            <th><a href="{{ route('sort', 'id') }}">ID</a></th>
+                            <th><a href="{{ route('sort', 'img_path') }}">商品画像</a></th>
+                            <th><a href="{{ route('sort', 'product_name') }}">商品名</a></th>
+                            <th><a href="{{ route('sort', 'price') }}">価格</a></th>
+                            <th><a href="{{ route('sort', 'stock') }}">在庫数</a></th>
+                            <th><a href="{{ route('sort', 'company_name') }}">メーカー名</a></th>
                         </tr>
                         @foreach ($products as $product)
                             <tr>
@@ -51,7 +55,11 @@
                                     </form>
                                 </td>
                                 <td>
-                                    <form action="{{ route('destroy',$product->id) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');">
+                                    <form
+                                        action="{{ route('destroy',$product->id) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('本当に削除しますか？'); deleteProduct(event, {{ $product->id }});">
+
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger">削除</button>
@@ -69,20 +77,16 @@
 
 @section('scripts')
 <script>
-    console.log('tuukaaaa');
 $(document).ready(function() {
-    console.log('tuuka0');
     // 商品一覧の非同期表示
     $.ajax({
         url: "{{ route('getListAjax') }}",
         type: "GET",
         dataType:"json",
     }).then(
-        console.log('tuuka1');
          function(response) {
          // 取得したデータを表示する処理
          let productList = $('#product-list');
-         console.log('tuuka2');
 
          // テーブルヘッダーを作成
         let tableHeader = $('<tr><th>ID</th><th>商品画像</th><th>商品名</th><th>価格</th><th>在庫数</th><th>メーカー名</th></tr>');
@@ -106,6 +110,7 @@ $(document).ready(function() {
                 // エラーハンドリングの処理
             }
         );
+
 
 
      // 検索フォームの送信イベント
@@ -152,48 +157,32 @@ $(document).ready(function() {
         );
     });
 
-// 検索フォームの送信イベント
-$('#search-form').submit(function(event) {
-    event.preventDefault();
 
-    // 入力されたキーワードとメーカー名を取得
-    let productName = $('.ProductName').val();
-     makerName = $('.MakerName').val();
 
-    // 商品一覧を非同期で取得
-    $.ajax({
-         url: "{{ route('getListAjax') }}",
-        type: "GET",
-        data: {
-            product_name: productName,
-            company_id: makerName
-        },
-    }).then(
-        function(response) {
-            // テーブルをクリア
-            $('#product-list').empty();
+    function deleteProduct(event,productId){
+        event.preventDefault();
 
-            // テーブルヘッダーを作成
-            let tableHeader = $('<tr><th>ID</th><th>商品画像</th><th>商品名</th><th>価格</th><th>在庫数</th><th>メーカー名</th></tr>');
-            $('#product-list').append(tableHeader);
-
-            // 商品データをテーブルに追加
-            response.products.forEach(function(product) {
-                let tableRow = $('<tr></tr>');
-                tableRow.append('<td>' + product.id + '</td>');
-                tableRow.append('<td><img src="{{ asset("storage") }}/' + product.img_path + '" class="img-fluid col-6"></td>');
-                tableRow.append('<td>' + product.product_name + '</td>');
-                tableRow.append('<td>' + product.price + '</td>');
-                tableRow.append('<td>' + product.stock + '</td>');
-                tableRow.append('<td>' + product.company_name + '</td>');
-                $('#product-list').append(tableRow);
-            });
-        },
-        function(xhr, status, error) {
-            // エラーハンドリングの処理
-        }
-    );
-});
+        //削除リクエスト送信
+        $.ajax({
+            url: '/products/${productId}',
+            type: 'DELETE',
+            dataType: 'json',
+            success: function (data) {
+                //削除が成功したとき
+                if(data.success) {
+                    //非表示にする
+                    $('tr[data-product-id="' + productId + '"]').hide();
+                } else {
+                    //失敗したとき
+                    alert(data.message);
+                }
+            },
+            error: function (xhr,status,error) {
+                //エラーハンドリング
+                alert('エラーが発生しました');
+            },
+        });
+    }
 });
 </script>
 

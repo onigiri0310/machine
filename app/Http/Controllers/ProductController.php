@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 use App\Models\Company;
 use Exception;
@@ -13,19 +14,37 @@ class ProductController extends Controller
     {
         $products = Product::getAllProducts();
         $companies = Company::getAllCompanies();
-
-        return response()->json([
-            'products' => $products,
-            'companies' => $companies,
-        ]);
+        return view('list', compact('products', 'companies'));
     }
 
     public function search(Request $request)
     {
         $productName = $request->input('product_name');
         $companyId = $request->input('company_id');
+        $minPrice = $request->input('min_price');
+        $maxPrice = $request->input('max_price');
+        $minStock = $request->input('min_stock');
+        $maxStock = $request->input('max_stock');
 
-        $products = Product::query()
+        $products = Product::query();
+
+        if (!empty($minPrice)) {
+            $products->where('price', '>=', $minPrice);
+        }
+
+        if (!empty($maxPrice)) {
+            $products->where('price', '<=', $maxPrice);
+        }
+
+        if (!empty($minStock)) {
+            $products->where('stock', '>=', $minStock);
+        }
+
+        if (!empty($maxStock)) {
+            $products->where('stock', '<=', $maxStock);
+        }
+
+        $products = $products
             ->when($productName, function ($query, $productName) {
                 return $query->where('product_name', 'LIKE', "%$productName%");
             })
@@ -36,10 +55,9 @@ class ProductController extends Controller
 
         $companies = Company::getAllCompanies();
 
-        return response()->json([
-            'products' => $products,
-            'companies' => $companies,
-        ]);
+        $results = $products;
+
+        return view('list', ['results' => $results,'companies' => $companies,'products' => $products]);
     }
 
     public function show($id)
@@ -51,18 +69,20 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
-        try{
+        try {
             $result = Product::deleteProduct($id);
 
             if ($result) {
-                return redirect()->route('list')->with('success', '商品が削除されました');
+                return view('list', compact('products', 'companies'));
             } else {
-                return redirect()->route('list')->with('error', '商品の削除に失敗しました');
+                return response()->json(['success' => false, 'message' => '商品の削除に失敗しました']);
             }
-        }catch(Exception $e) {
-            return redirect()->route('list')->with('error', 'エラーが発生しました: ' . $e->getMessage());
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'エラーが発生しました: ' . $e->getMessage()]);
         }
     }
+
+
 
     public function ProductRegister()
     {
@@ -128,6 +148,22 @@ class ProductController extends Controller
 
         // 取得した商品一覧データをJSON形式で返す
         return response()->json($products);
+    }
+
+    public function index()
+    {
+        // データの取得
+        $products = Product::orderBy('id', 'desc')->get();
+
+        return view('list', ['products' => $products]);
+    }
+
+    public function sort($column)
+    {
+        // カラムに基づいてデータをソート
+        $products = Product::orderBy($column, 'asc')->get();
+
+        return view('list', ['products' => $products]);
     }
 
 }
