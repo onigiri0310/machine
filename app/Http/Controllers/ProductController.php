@@ -69,15 +69,25 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
+        DB::beginTransaction(); //トランザクション開始
+
         try {
             $result = Product::deleteProduct($id);
 
             if ($result) {
-                return view('list', compact('products', 'companies'));
+                DB::commit(); //成功時コミット
             } else {
+                DB::rollback(); //失敗時ロールバック
                 return response()->json(['success' => false, 'message' => '商品の削除に失敗しました']);
             }
+
+            //削除成功時
+            $products = Product::getAllProducts();
+            $companies = Company::getAllCompanies();
+            return view('list',compact('products','companies'));
+
         } catch (Exception $e) {
+            DB::rollback(); //エラー時ロールバック
             return response()->json(['success' => false, 'message' => 'エラーが発生しました: ' . $e->getMessage()]);
         }
     }
@@ -160,10 +170,23 @@ class ProductController extends Controller
 
     public function sort($column)
     {
-        // カラムに基づいてデータをソート
-        $products = Product::orderBy($column, 'asc')->get();
+        // プロダクトテーブルのカラムを指定する
+        if ($column === 'company_name') {
+            $products = Product::join('companies', 'products.company_id', '=', 'companies.id')
+                ->orderBy('companies.company_name', 'asc')
+                ->select('products.*')
+                ->get();
+        } else {
+            $products = Product::orderBy($column, 'asc')->get();
+        }
 
-        return view('list', ['products' => $products]);
+        // メーカー情報
+        $products->load('company');
+
+        // メーカー一覧の取得
+        $companies = Company::all();
+
+        return view('list', compact('products', 'companies'));
     }
 
 }
