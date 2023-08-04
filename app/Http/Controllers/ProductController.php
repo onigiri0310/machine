@@ -153,7 +153,7 @@ class ProductController extends Controller
 
     public function getListAjax()
     {
-        // 商品一覧を取得する処理（Eloquentクエリなど）
+        // 商品一覧を取得する処理
         $products = Product::all();
 
         // 取得した商品一覧データをJSON形式で返す

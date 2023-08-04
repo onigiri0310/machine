@@ -2,7 +2,7 @@ $(document).ready(function() {
     // 商品一覧の非同期表示
     function displayProductList() {
         $.ajax({
-            url: "{{ route('getListAjax') }}",
+            url: getListAjaxUrl,
             type: "GET",
             dataType: "json",
             success: function(response) {
