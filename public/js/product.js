@@ -1,3 +1,5 @@
+console.log("通った");
+
 $(document).ready(function() {
     // 商品一覧の非同期表示
     function displayProductList() {
