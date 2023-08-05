@@ -4,7 +4,7 @@ $(document).ready(function() {
     // 商品一覧の非同期表示
     function displayProductList() {
         $.ajax({
-            url: "{{ route('getListAjax') }}",
+            url: getListAjaxUrl,
             type: "GET",
             dataType: "json",
             success: function(response) {
@@ -20,7 +20,7 @@ $(document).ready(function() {
                 response.forEach(function(product) {
                     let tableRow = $('<tr></tr>');
                     tableRow.append('<td>' + product.id + '</td>');
-                    tableRow.append('<td><img src="{{ asset("storage") }}/' + product.img_path + '" class="img-fluid col-6"></td>');
+                    tableRow.append('<td><img src="http://localhost:8888/machine/public/storage/' + product.img_path + '" class="img-fluid col-6"></td>');
                     tableRow.append('<td>' + product.product_name + '</td>');
                     tableRow.append('<td>' + product.price + '</td>');
                     tableRow.append('<td>' + product.stock + '</td>');
@@ -35,14 +35,78 @@ $(document).ready(function() {
         });
     }
 
-    // 初期表示時に商品一覧を表示
-    displayProductList();
+
+
 
     // 検索フォームの送信イベント
     $('#search-form').submit(function(event) {
         event.preventDefault();
-        displayProductList(); // 検索フォームの送信時に商品一覧を表示
+
+        // フォームのデータを取得してサーバーに送信
+        let formData = $(this).serialize();
+
+        //データが取得できているか確認
+        console.log(formData);
+        let encodedString = '%E3%81%A8%E3%82%8A'; //とり
+        let decodedString = decodeURIComponent(encodedString);
+        console.log(decodedString);
+
+        $.ajax({
+            url: searchUrl,
+            type: 'GET',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+                // 取得したデータを元に商品一覧を更新する処理を実行
+                updateProductList(response);
+            },
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText);
+                console.log(status);
+                console.log(error);
+                // エラーハンドリングの処理
+                alert('エラーが発生しました');
+            }
+        });
     });
+
+
+
+
+    function updateProductList(products) {
+        let productList = $('#product-list');
+        productList.empty();
+
+        // テーブルヘッダーを作成
+        let tableHeader = $('<tr><th>ID</th><th>商品画像</th><th>商品名</th><th>価格</th><th>在庫数</th><th>メーカー名</th></tr>');
+        productList.append(tableHeader);
+
+        // 商品データをテーブルに追加
+        products.forEach(function(product) {
+            let tableRow = $('<tr></tr>');
+            tableRow.append('<td>' + product.id + '</td>');
+            tableRow.append('<td><img src="' + product.img_path + '" class="img-fluid col-6"></td>');
+            tableRow.append('<td>' + product.product_name + '</td>');
+            tableRow.append('<td>' + product.price + '</td>');
+            tableRow.append('<td>' + product.stock + '</td>');
+            tableRow.append('<td>' + product.company_name + '</td>');
+            productList.append(tableRow);
+        });
+    }
+
+
+
+
+    // 商品詳細ページへのリンクボタンがクリックされたときの処理
+    $('.btn-show-details').click(function() {
+        let productId = $(this).data('product-id');
+        let url = "{{ route('detail', ':id') }}".replace(':id', productId);
+        window.location.href = url;
+    });
+
+
+
 
     // 商品削除ボタンのクリックイベント処理
     $('#product-list').on('click', '.btn-danger', function(event) {
@@ -104,7 +168,7 @@ $(document).ready(function() {
                 response.forEach(function(product) {
                     var tableRow = $('<tr></tr>');
                     tableRow.append('<td>' + product.id + '</td>');
-                    tableRow.append('<td><img src="{{ asset("storage") }}/' + product.img_path + '" class="img-fluid col-6"></td>');
+                    tableRow.append('<td><img src="http://localhost:8888/machine/public/storage/' + product.img_path + '" class="img-fluid col-6"></td>');
                     tableRow.append('<td>' + product.product_name + '</td>');
                     tableRow.append('<td>' + product.price + '</td>');
                     tableRow.append('<td>' + product.stock + '</td>');
