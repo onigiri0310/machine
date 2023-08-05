@@ -11,6 +11,7 @@ $(document).ready(function() {
                 // 取得したデータを表示する処理
                 let productList = $('#product-list');
                 productList.empty();
+                console.log("いちらん");
 
                 // テーブルヘッダーを作成
                 let tableHeader = $('<tr><th class="sortable" data-column="id" data-sort="desc">ID</th><th class="sortable" data-column="img_path" data-sort="asc">商品画像</th><th class="sortable" data-column="product_name" data-sort="asc">商品名</th><th class="sortable" data-column="price" data-sort="asc">価格</th><th class="sortable" data-column="stock" data-sort="asc">在庫数</th><th class="sortable" data-column="company_name" data-sort="asc">メーカー名</th></tr>');
@@ -20,7 +21,7 @@ $(document).ready(function() {
                 response.forEach(function(product) {
                     let tableRow = $('<tr></tr>');
                     tableRow.append('<td>' + product.id + '</td>');
-                    tableRow.append('<td><img src="http://localhost:8888/machine/public/' + product.img_path + '" class="img-fluid col-6"></td>');
+                    tableRow.append('<td><img src="http://localhost:8888/machine/public/storage/' + product.img_path + '" class="img-fluid col-6"></td>');
                     tableRow.append('<td>' + product.product_name + '</td>');
                     tableRow.append('<td>' + product.price + '</td>');
                     tableRow.append('<td>' + product.stock + '</td>');
@@ -35,12 +36,14 @@ $(document).ready(function() {
         });
     }
 
-
+    // 初期表示時に商品一覧を表示
+    displayProductList();
 
 
     // 検索フォームの送信イベント
     $('#search-form').submit(function(event) {
         event.preventDefault();
+
         // フォームのデータを取得してサーバーに送信
         let formData = $(this).serialize();
 
@@ -54,22 +57,19 @@ $(document).ready(function() {
             url: searchUrl,
             type: 'GET',
             data: formData,
-            dataType: 'json',
             success: function(response) {
-                console.log(response);
                 // 取得したデータを元に商品一覧を更新する処理を実行
                 updateProductList(response);
-            },
-            error: function(xhr, status, error) {
+              },
+              error: function(xhr, status, error) {
                 console.log(xhr.responseText);
                 console.log(status);
                 console.log(error);
                 // エラーハンドリングの処理
-                alert('エラーが発生しました');
-            }
+                alert("データ送信エラー", error);
+              }
         });
     });
-
 
 
 
