@@ -22,12 +22,6 @@
         crossorigin="anonymous">
     </script>
     <script src="{{ asset('js/product.js') }}"></script>
-    <script>
-        let getListAjaxUrl = "{{ route('getListAjax') }}";
-    </script>
-    <script>
-        let searchUrl = "{{ route('search') }}";
-    </script>
 
 </head>
 <body>
