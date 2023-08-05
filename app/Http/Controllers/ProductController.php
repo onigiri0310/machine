@@ -60,7 +60,9 @@ class ProductController extends Controller
 
         $results = $products;
 
-        return view('list', ['results' => $results,'companies' => $companies,'products' => $products]);
+        $data = ['results' => $results, 'companies' => $companies, 'products' => $products];
+        dd($data);
+        return response()->json($data);
     }
 
 
