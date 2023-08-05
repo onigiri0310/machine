@@ -17,6 +17,9 @@ class ProductController extends Controller
         return view('list', compact('products', 'companies'));
     }
 
+
+
+
     public function search(Request $request)
     {
         $productName = $request->input('product_name');
@@ -60,12 +63,18 @@ class ProductController extends Controller
         return view('list', ['results' => $results,'companies' => $companies,'products' => $products]);
     }
 
+
+
+
     public function show($id)
     {
         $product = Product::getProductById($id);
 
         return view('detail', compact('product'));
     }
+
+
+
 
     public function destroy($id)
     {
@@ -94,12 +103,16 @@ class ProductController extends Controller
 
 
 
+
     public function ProductRegister()
     {
         $companies = Company::getAllCompanies();
 
         return view('product_register', compact('companies'));
     }
+
+
+
 
     public function store(Request $request)
     {
@@ -127,6 +140,9 @@ class ProductController extends Controller
         }
     }
 
+
+
+
     public function edit($id)
     {
         $product = Product::getProductById($id);
@@ -134,6 +150,9 @@ class ProductController extends Controller
 
         return view('edit', compact('product', 'companies'));
     }
+
+
+
 
     public function update(Request $request, $id)
     {
@@ -151,6 +170,9 @@ class ProductController extends Controller
         }
     }
 
+
+
+
     public function getListAjax()
     {
         // 商品一覧を取得する処理（Eloquentクエリなど）
@@ -160,6 +182,9 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
+
+
+
     public function index()
     {
         // データの取得
@@ -167,6 +192,9 @@ class ProductController extends Controller
 
         return view('list', ['products' => $products]);
     }
+
+
+
 
     public function sort($column)
     {
