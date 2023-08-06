@@ -57,15 +57,13 @@ $(document).ready(function() {
             url: searchUrl,
             type: 'GET',
             data: formData,
+            dataType: 'json',
             success: function(response) {
+                console.log("データ取得", response);
                 // 取得したデータを元に商品一覧を更新する処理を実行
-                updateProductList(response);
+                updateProductList(response.products);
               },
               error: function(xhr, status, error) {
-                console.log(xhr.responseText);
-                console.log(status);
-                console.log(error);
-                // エラーハンドリングの処理
                 alert("データ送信エラー", error);
               }
         });
@@ -74,6 +72,7 @@ $(document).ready(function() {
 
 
     function updateProductList(products) {
+        console.log(products);
         let productList = $('#product-list');
         productList.empty();
 
@@ -85,7 +84,7 @@ $(document).ready(function() {
         products.forEach(function(product) {
             let tableRow = $('<tr></tr>');
             tableRow.append('<td>' + product.id + '</td>');
-            tableRow.append('<td><img src="' + product.img_path + '" class="img-fluid col-6"></td>');
+            tableRow.append('<td><img src="http://localhost:8888/machine/public/storage/' + product.img_path + '" class="img-fluid col-6"></td>');
             tableRow.append('<td>' + product.product_name + '</td>');
             tableRow.append('<td>' + product.price + '</td>');
             tableRow.append('<td>' + product.stock + '</td>');
@@ -93,6 +92,7 @@ $(document).ready(function() {
             productList.append(tableRow);
         });
     }
+
 
 
 
