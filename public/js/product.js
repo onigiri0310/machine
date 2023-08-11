@@ -20,14 +20,47 @@ $(document).ready(function() {
                 // 商品データをテーブルに追加
                 response.forEach(function(product) {
                     let tableRow = $('<tr></tr>');
+                    console.log("テーブル");
                     tableRow.append('<td>' + product.id + '</td>');
                     tableRow.append('<td><img src="http://localhost:8888/machine/public/storage/' + product.img_path + '" class="img-fluid col-6"></td>');
                     tableRow.append('<td>' + product.product_name + '</td>');
                     tableRow.append('<td>' + product.price + '</td>');
                     tableRow.append('<td>' + product.stock + '</td>');
                     tableRow.append('<td>' + product.company.company_name + '</td>');
+
+                    // 詳細ボタンを追加
+                    let detailForm = $('<form></form>').attr({
+                        action: 'detailUrl',
+                        method: 'GET'
+                    });
+                    detailForm.append('@csrf');
+                    detailForm.append($('<button></button>').attr({
+                        type: 'submit',
+                        class: 'btn btn-primary'
+                    }).text('詳細'));
+                    let detailCell = $('<td></td>').append(detailForm);
+                    tableRow.append(detailCell);
+
+                    // 削除ボタンを追加
+                    let deleteForm = $('<form></form>').attr({
+                        action: 'destroyUrl',
+                        method: 'POST',
+                        onsubmit: "return confirm('本当に削除しますか？'); deleteProduct(event, " + product.id + ");"
+                    });
+                    deleteForm.append('@csrf');
+                    deleteForm.append('@method('DELETE')');
+                    deleteForm.append($('<button></button>').attr({
+                        type: 'submit',
+                        class: 'btn btn-danger'
+                    }).text('削除'));
+                    let deleteCell = $('<td></td>').append(deleteForm);
+                    tableRow.append(deleteCell);
+
                     productList.append(tableRow);
                 });
+                console.log("ボタン");
+                $('.btn-primary').show();
+                $('.btn-danger').show();
             },
             error: function(xhr, status, error) {
                 // エラーハンドリングの処理
@@ -38,6 +71,8 @@ $(document).ready(function() {
 
     // 初期表示時に商品一覧を表示
     displayProductList();
+
+
 
 
     // 検索フォームの送信イベント
