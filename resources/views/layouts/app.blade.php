@@ -28,6 +28,12 @@
     <script>
         let searchUrl = "{{ route('search') }}";
     </script>
+    <script>
+        let detailUrl = "{{ route('detail', ['id' => $product->id]) }}";
+    </script>
+    <script>
+        let destroyUrl = "{{ route('destroy',['id' => $product->id]) }}";
+    </script>
 
 </head>
 <body>
