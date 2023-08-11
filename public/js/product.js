@@ -3,6 +3,9 @@ console.log("通った");
 $(document).ready(function() {
     // 商品一覧の非同期表示
     function displayProductList() {
+
+        let csrfToken = $('#product-list').data('csrf-token');
+
         $.ajax({
             url: getListAjaxUrl,
             type: "GET",
@@ -28,27 +31,44 @@ $(document).ready(function() {
                     tableRow.append('<td>' + product.stock + '</td>');
                     tableRow.append('<td>' + product.company.company_name + '</td>');
 
+
                     // 詳細ボタンを追加
-                    let detailForm = $('<form></form>').attr({
-                        action: 'detailUrl',
-                        method: 'GET'
-                    });
-                    detailForm.append('@csrf');
-                    detailForm.append($('<button></button>').attr({
-                        type: 'submit',
+                    let detailUrl = `http://localhost:8888/machine/public/detail`;
+                    let detailButton = $('<button></button>').attr({
+                        type: 'button',
                         class: 'btn btn-primary'
-                    }).text('詳細'));
-                    let detailCell = $('<td></td>').append(detailForm);
+                    }).text('詳細');
+                    detailButton.click(function() {
+                        window.location.href = detailUrl + '/' + product.id;
+                    });
+                    let detailCell = $('<td></td>').append(detailButton);
+
+                    console.log('detailUrl:', detailUrl);
+
                     tableRow.append(detailCell);
 
+
+
                     // 削除ボタンを追加
+                    let destroyUrl = `http://localhost:8888/machine/public/products`;
+                    console.log('destroyUrl:', destroyUrl);
+                    console.log('productId:', product.id);
+
                     let deleteForm = $('<form></form>').attr({
-                        action: 'destroyUrl',
+                        action: destroyUrl,
                         method: 'POST',
                         onsubmit: "return confirm('本当に削除しますか？'); deleteProduct(event, " + product.id + ");"
                     });
-                    deleteForm.append('@csrf');
-                    deleteForm.append('@method('DELETE')');
+                    deleteForm.append($('<input>').attr({
+                        type: 'hidden',
+                        name: '_method',
+                        value: 'DELETE'
+                    }));
+                    deleteForm.append($('<input>').attr({
+                        type: 'hidden',
+                        name: '_token',
+                        value: csrfToken
+                    }));
                     deleteForm.append($('<button></button>').attr({
                         type: 'submit',
                         class: 'btn btn-danger'
@@ -58,9 +78,6 @@ $(document).ready(function() {
 
                     productList.append(tableRow);
                 });
-                console.log("ボタン");
-                $('.btn-primary').show();
-                $('.btn-danger').show();
             },
             error: function(xhr, status, error) {
                 // エラーハンドリングの処理
@@ -164,7 +181,8 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
                 // エラーハンドリング
-                alert('エラーが発生しました');
+                console.log(error);
+                alert('エラーが発生したかも');
             },
         });
     });
@@ -173,6 +191,7 @@ $(document).ready(function() {
     $('#product-list').on('click', '.sortable', function() {
         let column = $(this).data('column');
         let currentSort = $(this).data('sort');
+        console.log("ソート表示");
 
         // 昇順 ⇄ 降順 の切り替え
         if (currentSort === 'asc') {
