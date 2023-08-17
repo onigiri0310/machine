@@ -29,25 +29,25 @@ class ProductController extends Controller
         $minStock = $request->input('min_stock');
         $maxStock = $request->input('max_stock');
 
-        $products = Product::query();
+        $productsQuery = Product::query();
 
         if (!empty($minPrice)) {
-            $products->where('price', '>=', $minPrice);
+            $productsQuery->where('price', '>=', $minPrice);
         }
 
         if (!empty($maxPrice)) {
-            $products->where('price', '<=', $maxPrice);
+            $productsQuery->where('price', '<=', $maxPrice);
         }
 
         if (!empty($minStock)) {
-            $products->where('stock', '>=', $minStock);
+            $productsQuery->where('stock', '>=', $minStock);
         }
 
         if (!empty($maxStock)) {
-            $products->where('stock', '<=', $maxStock);
+            $productsQuery->where('stock', '<=', $maxStock);
         }
 
-        $products = Product::query()
+        $products = $productsQuery
             ->when($productName, function ($query, $productName) {
                 return $query->where('product_name', 'LIKE', "%$productName%");
             })
@@ -69,6 +69,7 @@ class ProductController extends Controller
         $data = ['results' => $results, 'companies' => $companies, 'products' => $products];
         return response()->json($data);
     }
+
 
 
 
