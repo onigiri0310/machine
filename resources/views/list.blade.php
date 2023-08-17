@@ -41,33 +41,33 @@
                             <th class="sortable" data-column="company_name" data-sort="asc"><a href="{{ route('sort', ['column' => 'company_name', 'sort' => 'asc']) }}">メーカー名</a></th>
                         </tr>
                         @foreach ($products as $product)
-                            <tr>
-                                <td>{{ $product->id }}</td>
-                                <td><img src="{{ asset('storage/' . $product->img_path) }}" class="img-fluid col-6"></td>
-                                <td>{{ $product->product_name }}</td>
-                                <td>{{ $product->price }}</td>
-                                <td>{{ $product->stock }}</td>
-                                <td>{{ $product->company->company_name }}</td>
-                                <td>
-                                    <form action="{{ route('detail', $product->id) }}" method="GET">
-                                        @csrf
-                                        <button type="submit" class="btn btn-primary">詳細</button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <form
-                                        action="{{ route('destroy', $product->id) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('本当に削除しますか？'); deleteProduct(event, {{ $product->id }});">
+                        <tr>
+                            <td>{{ $product->id }}</td>
+                            <td><img src="{{ asset('storage/' . $product->img_path) }}" class="img-fluid col-6"></td>
+                            <td>{{ $product->product_name }}</td>
+                            <td>{{ $product->price }}</td>
+                            <td>{{ $product->stock }}</td>
+                            <td>{{ $product->company->company_name }}</td>
+                            <td>
+                                <form action="{{ route('detail', $product->id) }}" method="GET">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary">詳細</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form
+                                    action="{{ route('destroy', $product->id) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('本当に削除しますか？');"
+                                    data-id="{{ $product->id }}">
 
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">削除</button>
-                                    </form>
-                                </td>
-                            </tr>
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger" data-id="{{ $product->id }}">削除</button>
+                                </form>
+                            </td>
+                        </tr>
                         @endforeach
-
                     </table>
                 </div>
             </div>
