@@ -12,9 +12,10 @@ class ProductController extends Controller
 {
     public function list()
     {
+        $sortable = 'id';
         $products = Product::getAllProducts();
         $companies = Company::getAllCompanies();
-        return view('list', compact('products', 'companies'));
+        return view('list', compact('products', 'companies','sortable'));
     }
 
 
@@ -203,9 +204,10 @@ class ProductController extends Controller
     public function index()
     {
         // データの取得
+        $sortable = 'id';
         $products = Product::orderBy('id', 'desc')->get();
 
-        return view('list', ['products' => $products]);
+        return view('list', compact('sortable','products'));
     }
 
 
@@ -229,7 +231,10 @@ class ProductController extends Controller
         // メーカー一覧の取得
         $companies = Company::all();
 
-        return view('list', compact('products', 'companies'));
+        $sortable = 'id';
+
+        return response()->json($products);
+        return view('list', compact('products', 'companies','sortable'));
     }
 
 }
