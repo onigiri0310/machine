@@ -100,6 +100,7 @@ class ProductController extends Controller
             //削除成功時
             $products = Product::getAllProducts();
             $companies = Company::getAllCompanies();
+            return response()->json(['success' => true, 'message' => '削除が成功しました']);
             return view('list',compact('products','companies'));
 
         } catch (Exception $e) {
