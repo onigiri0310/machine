@@ -88,6 +88,7 @@ $(document).ready(function() {
                 if (data.success) {
                     // 該当のIDの行を非表示にする
                     $('tr[data-product-id="' + productId + '"]').hide();
+                    location.reload();
                 } else {
                     // 失敗したとき
                     alert(data.message);
