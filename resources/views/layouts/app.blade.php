@@ -26,10 +26,19 @@
         let searchUrl = "{{ route('search') }}";
     </script>
     @if(isset($product))
-    <script>
-        let destroyUrl = "{{ route('destroy',['id' => $product->id]) }}";
-    </script>
+        <script>
+            let destroyUrl = "{{ route('destroy',['id' => $product->id]) }}";
+        </script>
     @endif
+    <script>
+    function generateSortUrl(column) {
+        return "{{ route('sort', ['column' => ':column']) }}".replace(':column', column);
+    }
+    </script>
+
+
+
+
 
 
 </head>
