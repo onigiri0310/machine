@@ -33,13 +33,14 @@
                 <div class="col-12" id="product-list">
                     <table class="col-10">
                         <tr>
-                            <th class="sortable" data-column="id" data-sort="desc"><a href="{{ route('sort', ['column' => 'id', 'sort' => 'desc']) }}">ID</a></th>
-                            <th class="sortable" data-column="img_path" data-sort="asc"><a href="{{ route('sort', ['column' => 'img_path', 'sort' => 'asc']) }}">商品画像</a></th>
-                            <th class="sortable" data-column="product_name" data-sort="asc"><a href="{{ route('sort', ['column' => 'product_name', 'sort' => 'asc']) }}">商品名</a></th>
-                            <th class="sortable" data-column="price" data-sort="asc"><a href="{{ route('sort', ['column' => 'price', 'sort' => 'asc']) }}">価格</a></th>
-                            <th class="sortable" data-column="stock" data-sort="asc"><a href="{{ route('sort', ['column' => 'stock', 'sort' => 'asc']) }}">在庫数</a></th>
-                            <th class="sortable" data-column="company_name" data-sort="asc"><a href="{{ route('sort', ['column' => 'company_name', 'sort' => 'asc']) }}">メーカー名</a></th>
+                            <th class="sortable" data-column="id" data-sort="{{ $sortable === 'id' ? 'desc' : 'asc' }}"><a href="#">ID</a></th>
+                            <th class="sortable" data-column="img_path" data-sort="{{ $sortable === 'img_path' ? 'desc' : 'asc' }}"><a href="#">商品画像</a></th>
+                            <th class="sortable" data-column="product_name" data-sort="{{ $sortable === 'product_name' ? 'desc' : 'asc' }}"><a href="#">商品名</a></th>
+                            <th class="sortable" data-column="price" data-sort="{{ $sortable === 'price' ? 'desc' : 'asc' }}"><a href="#">価格</a></th>
+                            <th class="sortable" data-column="stock" data-sort="{{ $sortable === 'stock' ? 'desc' : 'asc' }}"><a href="#">在庫数</a></th>
+                            <th class="sortable" data-column="company_name" data-sort="{{ $sortable === 'company_name' ? 'desc' : 'asc' }}"><a href="#">メーカー名</a></th>
                         </tr>
+
                         @foreach ($products as $product)
                         <tr>
                             <td>{{ $product->id }}</td>
