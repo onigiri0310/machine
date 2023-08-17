@@ -28,18 +28,11 @@
     <script>
         let searchUrl = "{{ route('search') }}";
     </script>
-    <!-- <script>
-        let detailUrl = "{{ route('detail', ['id' => $product->id]) }}";
-    </script>
+    @if(isset($product))
     <script>
         let destroyUrl = "{{ route('destroy',['id' => $product->id]) }}";
-    </script> -->
-    <script>
-        $(document).ready(function() {
-            let csrfToken = "{{ csrf_token() }}";
-            $('#product-list').data('csrf-token', csrfToken);
-        });
     </script>
+    @endif
 
 
 </head>
