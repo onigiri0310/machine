@@ -102,22 +102,38 @@ $(document).ready(function() {
         });
     });
 
+
+
+
      // ソート機能の追加
     $('#product-list').on('click', '.sortable', function() {
         let column = $(this).data('column');
         let currentSort = $(this).data('sort');
+        let sortUrl = generateSortUrl(column) + '?sort=' + currentSort;
+
         console.log("ソート表示");
+        console.log(column);
+        console.log(currentSort);
+        console.log(sortUrl);
 
         // 昇順 ⇄ 降順 の切り替え
         if (currentSort === 'asc') {
-            $(this).data('sort', 'desc');
+            currentSort = 'desc';
+            $(this).data('sort', currentSort);
+            console.log("降順");
+            console.log(currentSort);
         } else {
-            $(this).data('sort', 'asc');
+            currentSort = 'asc';
+            $(this).data('sort', currentSort);
+            console.log("昇順");
+            console.log(currentSort);
         }
+
+        console.log(currentSort);
 
         // 商品一覧を非同期で取得
         $.ajax({
-            url: "{{ route('sort') }}",
+            url: sortUrl,
             type: "GET",
             dataType: "json",
             data: {
@@ -125,6 +141,8 @@ $(document).ready(function() {
                 sort: currentSort
             },
             success: function(response) {
+                console.log("機能している");
+                console.log(currentSort);
                 // テーブルをクリア
                 $('#product-list table').empty();
 
@@ -145,8 +163,9 @@ $(document).ready(function() {
                 });
             },
             error: function(xhr, status, error) {
+                console.log(error);
                 // エラーハンドリングの処理
-                alert('エラーが発生しました');
+                alert('エラーが発生した可能性アリ');
             }
         });
     });
