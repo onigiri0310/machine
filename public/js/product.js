@@ -87,8 +87,10 @@ $(document).ready(function() {
                 // 削除が成功したとき
                 if (data.success) {
                     // 該当のIDの行を非表示にする
-                    $('tr[data-product-id="' + productId + '"]').hide();
-                    location.reload();
+                    // $('tr[data-product-id="' + productId + '"]').hide();
+                    // location.reload();
+                    clickEle = $(this);
+                    clickeEle.parents('tr').remove();
                 } else {
                     // 失敗したとき
                     alert(data.message);
@@ -118,15 +120,11 @@ $(document).ready(function() {
 
         // 昇順 ⇄ 降順 の切り替え
         if (currentSort === 'asc') {
-            currentSort = 'desc';
-            $(this).data('sort', currentSort);
+            $(this).data('sort', desc);
             console.log("降順");
-            console.log(currentSort);
         } else {
-            currentSort = 'asc';
-            $(this).data('sort', currentSort);
+            $(this).data('sort', asc);
             console.log("昇順");
-            console.log(currentSort);
         }
 
         console.log(currentSort);
@@ -147,8 +145,10 @@ $(document).ready(function() {
                 $('#product-list table').empty();
 
                 // テーブルヘッダーを作成
-                let tableHeader = $('<tr><th class="sortable" data-column="id" data-sort="desc">ID</th><th class="sortable" data-column="img_path" data-sort="asc">商品画像</th><th class="sortable" data-column="product_name" data-sort="asc">商品名</th><th class="sortable" data-column="price" data-sort="asc">価格</th><th class="sortable" data-column="stock" data-sort="asc">在庫数</th><th class="sortable" data-column="company_name" data-sort="asc">メーカー名</th></tr>');
+                let tableHeader = $('<tr><th class="sortable" data-column="id" data-sort="' + currentSort + '">ID</th><th class="sortable" data-column="img_path" data-sort="' + currentSort + '">商品画像</th><th class="sortable" data-column="product_name" data-sort="' + currentSort + '">商品名</th><th class="sortable" data-column="price" data-sort="' + currentSort + '">価格</th><th class="sortable" data-column="stock" data-sort="' + currentSort + '">在庫数</th><th class="sortable" data-column="company_name" data-sort="' + currentSort + '">メーカー名</th></tr>');
                 $('#product-list table').append(tableHeader);
+                console.log(tableHeader[0].outerHTML);
+
 
                 // 商品データをテーブルに追加
                 response.forEach(function(product) {
