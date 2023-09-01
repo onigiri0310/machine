@@ -216,13 +216,15 @@ class ProductController extends Controller
     public function sort($column)
     {
         // プロダクトテーブルのカラムを指定する
+        $currentSort = request()->input('newSort', 'asc'); // JavaScriptからのソート方向を取得
+
         if ($column === 'company_name') {
             $products = Product::join('companies', 'products.company_id', '=', 'companies.id')
-                ->orderBy('companies.company_name', 'asc')
+                ->orderBy('companies.company_name', $currentSort)
                 ->select('products.*')
                 ->get();
         } else {
-            $products = Product::orderBy($column, 'asc')->get();
+            $products = Product::orderBy($column, $currentSort)->get();
         }
 
         // メーカー情報
@@ -231,10 +233,11 @@ class ProductController extends Controller
         // メーカー一覧の取得
         $companies = Company::all();
 
-        $sortable = 'id';
+        $sortable = $column; // 現在のソート対象カラムを設定
 
         return response()->json($products);
-        return view('list', compact('products', 'companies','sortable'));
+        return view('list', compact('products', 'companies', 'sortable'));
     }
+
 
 }
