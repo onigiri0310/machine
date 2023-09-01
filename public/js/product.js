@@ -108,7 +108,7 @@ $(document).ready(function() {
 
 
      // ソート機能の追加
-    $('#product-list').on('click', '.sortable', function() {
+    $('#product-list').on('click','.sortable', function() {
         let column = $(this).data('column');
         let currentSort = $(this).data('sort');
         let sortUrl = generateSortUrl(column) + '?sort=' + currentSort;
@@ -119,15 +119,10 @@ $(document).ready(function() {
         console.log(sortUrl);
 
         // 昇順 ⇄ 降順 の切り替え
-        if (currentSort === 'asc') {
-            $(this).data('sort', desc);
-            console.log("降順");
-        } else {
-            $(this).data('sort', asc);
-            console.log("昇順");
-        }
+        let newSort = currentSort === 'asc' ? 'desc' : 'asc';
+        $(this).data('sort', newSort); // ソート方向を切り替え
 
-        console.log(currentSort);
+        console.log(newSort);
 
         // 商品一覧を非同期で取得
         $.ajax({
@@ -136,11 +131,10 @@ $(document).ready(function() {
             dataType: "json",
             data: {
                 column: column,
-                sort: currentSort
+                sort: newSort
             },
             success: function(response) {
                 console.log("機能している");
-                console.log(currentSort);
                 // テーブルをクリア
                 $('#product-list table').empty();
 
