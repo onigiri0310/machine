@@ -111,7 +111,7 @@ $(document).ready(function() {
     $('#product-list').on('click','.sortable', function() {
         let column = $(this).data('column');
         let currentSort = $(this).data('sort');
-        let sortUrl = generateSortUrl(column) + '?sort=' + currentSort;
+        let sortUrl = generateSortUrl(column);
 
         console.log("ソート表示");
         console.log(column);
@@ -139,7 +139,7 @@ $(document).ready(function() {
                 $('#product-list table').empty();
 
                 // テーブルヘッダーを作成
-                let tableHeader = $('<tr><th class="sortable" data-column="id" data-sort="' + currentSort + '">ID</th><th class="sortable" data-column="img_path" data-sort="' + currentSort + '">商品画像</th><th class="sortable" data-column="product_name" data-sort="' + currentSort + '">商品名</th><th class="sortable" data-column="price" data-sort="' + currentSort + '">価格</th><th class="sortable" data-column="stock" data-sort="' + currentSort + '">在庫数</th><th class="sortable" data-column="company_name" data-sort="' + currentSort + '">メーカー名</th></tr>');
+                let tableHeader = $('<tr><th class="sortable" data-column="id" data-sort="' + newSort + '">ID</th><th class="sortable" data-column="img_path" data-sort="' + newSort + '">商品画像</th><th class="sortable" data-column="product_name" data-sort="' + newSort + '">商品名</th><th class="sortable" data-column="price" data-sort="' + newSort + '">価格</th><th class="sortable" data-column="stock" data-sort="' + newSort + '">在庫数</th><th class="sortable" data-column="company_name" data-sort="' + newSort + '">メーカー名</th></tr>');
                 $('#product-list table').append(tableHeader);
                 console.log(tableHeader[0].outerHTML);
 
