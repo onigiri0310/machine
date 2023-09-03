@@ -16,5 +16,5 @@ use App\Http\Controllers\API\SalesController;
 |
 */
 
-Route::get('/sales', [SalesController::class]);
+Route::get('/sales',[App\Http\Controllers\API\SalesController::class, 'create'])->name('create');
 
